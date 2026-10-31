@@ -313,7 +313,8 @@
               "succeeded",
               "failed",
               "canceled"
-            ]
+            ],
+            "description": "`queued` while the job waits for a free slot, `running` once its first step starts (`started_at` is set then)."
           },
           "mode": {
             "type": "string",
