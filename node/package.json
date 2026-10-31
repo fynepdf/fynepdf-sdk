@@ -1,0 +1,49 @@
+{
+  "name": "fynepdf",
+  "version": "0.1.0",
+  "description": "The FynePDF API for Node.js: compress, convert, OCR, redact, merge, split and generate PDFs, and read them with AI. Typed, no dependencies.",
+  "keywords": [
+    "pdf",
+    "pdf-api",
+    "compress-pdf",
+    "pdf-to-word",
+    "pdf-to-excel",
+    "html-to-pdf",
+    "ocr",
+    "redact",
+    "merge-pdf",
+    "generate-pdf",
+    "fynepdf"
+  ],
+  "homepage": "https://fynepdf.com/developers/docs",
+  "license": "MIT",
+  "author": "FynePDF <support@fynepdf.com> (https://fynepdf.com)",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "generate": "node scripts/generate.mjs",
+    "build": "tsc -p tsconfig.json",
+    "test": "node --test test/*.test.mjs",
+    "smoke": "node test/smoke.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.4",
+    "typescript": "5.9.3"
+  }
+}

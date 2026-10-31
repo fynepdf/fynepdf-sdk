@@ -1,0 +1,4183 @@
+{
+  "api_base": "https://api.fynepdf.com/v1",
+  "mcp_url": "https://api.fynepdf.com/mcp",
+  "actions": [
+    {
+      "name": "compress",
+      "title": "Compress PDF",
+      "description": "Make a PDF smaller, at a level or under a target size. The target is checked on the final file; the receipt says whether it was met.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "2 credits per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/compress",
+        "operation_id": "pdfCompress"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "target_size_bytes": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "target_size_bytes": 5000000
+        },
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z",
+          "target_size_bytes": 5000000
+        }
+      }
+    },
+    {
+      "name": "merge",
+      "title": "Merge PDFs",
+      "description": "Join PDFs into one, in the order given. Each file gets a bookmark with its name.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": true,
+      "output": "pdf",
+      "credits": "1 credit per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/merge",
+        "operation_id": "pdfMerge"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {},
+        "shortcut_body": {
+          "file_ids": [
+            "file_01jc8x4m2k9q7r3t5vwy6z",
+            "file_01jc8x5n7p2s4u6w8y0a1b"
+          ]
+        }
+      }
+    },
+    {
+      "name": "split",
+      "title": "Split PDF",
+      "description": "Split a PDF into parts, by page ranges or by a largest part size. Returns a ZIP, so it must be the last step.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "zip",
+      "credits": "1 credit per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/split",
+        "operation_id": "pdfSplit"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "ranges": {
+            "minItems": 1,
+            "maxItems": 100,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^\\d+(-\\d+)?$"
+            }
+          },
+          "max_part_bytes": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "ranges": [
+            "1-3",
+            "4-10"
+          ]
+        },
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z",
+          "ranges": [
+            "1-3",
+            "4-10"
+          ]
+        }
+      }
+    },
+    {
+      "name": "rotate",
+      "title": "Rotate pages",
+      "description": "Turn all pages, one page, or a range, by 90, 180 or 270 degrees clockwise.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "1 credit per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/rotate",
+        "operation_id": "pdfRotate"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "angle": {
+            "anyOf": [
+              {
+                "type": "number",
+                "const": 90
+              },
+              {
+                "type": "number",
+                "const": 180
+              },
+              {
+                "type": "number",
+                "const": 270
+              }
+            ]
+          },
+          "pages": {
+            "type": "string",
+            "pattern": "^(all|\\d+|\\d+-\\d+)$"
+          }
+        },
+        "required": [
+          "angle"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "angle": 90,
+          "pages": "all"
+        },
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z",
+          "angle": 90,
+          "pages": "all"
+        }
+      }
+    },
+    {
+      "name": "delete_pages",
+      "title": "Delete pages",
+      "description": "Remove the listed pages (1-based).",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "1 credit per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/delete-pages",
+        "operation_id": "pdfDeletePages"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "pages": {
+            "minItems": 1,
+            "maxItems": 5000,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          }
+        },
+        "required": [
+          "pages"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "pages": [
+            2,
+            5
+          ]
+        },
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z",
+          "pages": [
+            2,
+            5
+          ]
+        }
+      }
+    },
+    {
+      "name": "extract_pages",
+      "title": "Extract pages",
+      "description": "Keep only the listed pages (1-based), as one PDF.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "1 credit per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/extract-pages",
+        "operation_id": "pdfExtractPages"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "pages": {
+            "minItems": 1,
+            "maxItems": 5000,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          }
+        },
+        "required": [
+          "pages"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "pages": [
+            1,
+            2,
+            3
+          ]
+        },
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z",
+          "pages": [
+            1,
+            2,
+            3
+          ]
+        }
+      }
+    },
+    {
+      "name": "reorder_pages",
+      "title": "Reorder pages",
+      "description": "Put pages in a new order: [3, 1, 2] makes page 3 first. Pages left out are dropped.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "1 credit per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/reorder-pages",
+        "operation_id": "pdfReorderPages"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "order": {
+            "minItems": 1,
+            "maxItems": 5000,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          }
+        },
+        "required": [
+          "order"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "order": [
+            3,
+            1,
+            2
+          ]
+        },
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z",
+          "order": [
+            3,
+            1,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "name": "page_numbers",
+      "title": "Add page numbers",
+      "description": "Number the pages. format uses %d twice: \"Page %d of %d\".",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "1 credit per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/page-numbers",
+        "operation_id": "pdfPageNumbers"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "format": {
+            "type": "string",
+            "maxLength": 60
+          },
+          "position": {
+            "type": "string",
+            "enum": [
+              "top-left",
+              "top-center",
+              "top-right",
+              "bottom-left",
+              "bottom-center",
+              "bottom-right"
+            ]
+          },
+          "size": {
+            "type": "number",
+            "minimum": 4,
+            "maximum": 72
+          },
+          "start_number": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "skip_cover_page": {
+            "type": "boolean"
+          },
+          "font": {
+            "type": "string",
+            "enum": [
+              "Helvetica",
+              "Times-Roman",
+              "Courier"
+            ]
+          },
+          "color": {
+            "type": "string",
+            "pattern": "^#[0-9a-fA-F]{6}$"
+          },
+          "opacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "format": "Page %d of %d",
+          "position": "bottom-center"
+        },
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z",
+          "format": "Page %d of %d",
+          "position": "bottom-center"
+        }
+      }
+    },
+    {
+      "name": "watermark",
+      "title": "Add a text watermark",
+      "description": "Stamp text across every page.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "1 credit per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/watermark",
+        "operation_id": "pdfWatermark"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "size": {
+            "type": "number",
+            "minimum": 6,
+            "maximum": 300
+          },
+          "opacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "rotation": {
+            "type": "number",
+            "minimum": -360,
+            "maximum": 360
+          },
+          "color": {
+            "type": "string",
+            "pattern": "^#[0-9a-fA-F]{6}$"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "text": "CONFIDENTIAL",
+          "opacity": 0.2,
+          "rotation": 45
+        },
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z",
+          "text": "CONFIDENTIAL",
+          "opacity": 0.2,
+          "rotation": 45
+        }
+      }
+    },
+    {
+      "name": "grayscale",
+      "title": "Convert to gray",
+      "description": "Turn every color in the PDF to shades of gray.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "1 credit per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/grayscale",
+        "operation_id": "pdfGrayscale"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {},
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z"
+        }
+      }
+    },
+    {
+      "name": "protect",
+      "title": "Add a password",
+      "description": "Lock the PDF with a password needed to open it.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "1 credit per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/protect",
+        "operation_id": "pdfProtect"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "password"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "password": "correct-horse-battery"
+        },
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z",
+          "password": "correct-horse-battery"
+        }
+      }
+    },
+    {
+      "name": "unlock",
+      "title": "Remove a password",
+      "description": "Open a locked PDF with its password and save it without one.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "1 credit per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/unlock",
+        "operation_id": "pdfUnlock"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "password"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "password": "the-current-password"
+        },
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z",
+          "password": "the-current-password"
+        }
+      }
+    },
+    {
+      "name": "flatten",
+      "title": "Flatten forms and annotations",
+      "description": "Burn form fields and annotations into the page so they can't be changed.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "1 credit per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/flatten",
+        "operation_id": "pdfFlatten"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {},
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z"
+        }
+      }
+    },
+    {
+      "name": "repair",
+      "title": "Repair PDF",
+      "description": "Rebuild a damaged PDF's structure so it opens again.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "1 credit per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/repair",
+        "operation_id": "pdfRepair"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {},
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z"
+        }
+      }
+    },
+    {
+      "name": "crop",
+      "title": "Crop pages",
+      "description": "Keep a rectangle of every page: x and y of its top-left corner, then width and height, in PDF points.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "1 credit per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/crop",
+        "operation_id": "pdfCrop"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "number",
+            "minimum": 0
+          },
+          "y": {
+            "type": "number",
+            "minimum": 0
+          },
+          "width": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "height": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        },
+        "required": [
+          "x",
+          "y",
+          "width",
+          "height"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "x": 36,
+          "y": 36,
+          "width": 540,
+          "height": 720
+        },
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z",
+          "x": 36,
+          "y": 36,
+          "width": 540,
+          "height": 720
+        }
+      }
+    },
+    {
+      "name": "n_up",
+      "title": "Pages per sheet",
+      "description": "Put 2, 4, 6, 8, 9 or 16 pages on each sheet, or lay pages out as a booklet.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "1 credit per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/n-up",
+        "operation_id": "pdfNUp"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "n": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "booklet": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "n"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "n": 2
+        },
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z",
+          "n": 2
+        }
+      }
+    },
+    {
+      "name": "to_pdfa",
+      "title": "Convert to PDF/A",
+      "description": "Make an archival PDF/A file (level 1b, 2b or 3b). 2b by default.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "2 credits per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/to-pdfa",
+        "operation_id": "pdfToPdfa"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "enum": [
+              "1",
+              "2",
+              "3"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "version": "2"
+        },
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z",
+          "version": "2"
+        }
+      }
+    },
+    {
+      "name": "ocr",
+      "title": "OCR: make scans searchable",
+      "description": "Add a text layer to scanned pages so they can be searched and copied.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "1 credit per page",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/ocr",
+        "operation_id": "pdfOcr"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {},
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z"
+        }
+      }
+    },
+    {
+      "name": "pdf_to_word",
+      "title": "PDF to Word",
+      "description": "An editable .docx that keeps the layout. Ends the job.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "docx",
+      "credits": "3 credits per 50 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/pdf-to-word",
+        "operation_id": "pdfPdfToWord"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {},
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z"
+        }
+      }
+    },
+    {
+      "name": "pdf_to_markdown",
+      "title": "PDF to Markdown",
+      "description": "The text as Markdown, for pipelines and models. Ends the job.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "markdown",
+      "credits": "2 credits per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/pdf-to-markdown",
+        "operation_id": "pdfPdfToMarkdown"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {},
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z"
+        }
+      }
+    },
+    {
+      "name": "pdf_to_images",
+      "title": "PDF to images",
+      "description": "Every page as a PNG or JPEG, in a ZIP. Ends the job.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "zip",
+      "credits": "2 credits per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/pdf-to-images",
+        "operation_id": "pdfPdfToImages"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "format": {
+            "type": "string",
+            "enum": [
+              "png",
+              "jpg"
+            ]
+          },
+          "dpi": {
+            "type": "integer",
+            "minimum": 36,
+            "maximum": 300
+          }
+        },
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "format": "png",
+          "dpi": 150
+        },
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z",
+          "format": "png",
+          "dpi": 150
+        }
+      }
+    },
+    {
+      "name": "pdf_to_epub",
+      "title": "PDF to EPUB",
+      "description": "A reflowable e-book. Ends the job.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "epub",
+      "credits": "2 credits per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/pdf-to-epub",
+        "operation_id": "pdfPdfToEpub"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {},
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z"
+        }
+      }
+    },
+    {
+      "name": "office_to_pdf",
+      "title": "Word, Excel or PowerPoint to PDF",
+      "description": "Convert .docx, .doc, .odt, .rtf, .xlsx, .xls, .ods, .pptx, .ppt or .odp to PDF. First step only.",
+      "accepts": [
+        "word",
+        "excel",
+        "powerpoint"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "3 credits per 50 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/office-to-pdf",
+        "operation_id": "pdfOfficeToPdf"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {},
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z"
+        }
+      }
+    },
+    {
+      "name": "image_to_pdf",
+      "title": "Images to PDF",
+      "description": "One page per image, in the order given (JPEG, PNG, WebP, HEIC, GIF, BMP, TIFF). First step only.",
+      "accepts": [
+        "image"
+      ],
+      "combines": true,
+      "output": "pdf",
+      "credits": "2 credits per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/image-to-pdf",
+        "operation_id": "pdfImageToPdf"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "page_size": {
+            "type": "string",
+            "enum": [
+              "fit",
+              "A4",
+              "US Letter"
+            ]
+          },
+          "orientation": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "portrait",
+              "landscape"
+            ]
+          },
+          "margin": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 144
+          }
+        },
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "page_size": "A4",
+          "orientation": "auto"
+        },
+        "shortcut_body": {
+          "file_ids": [
+            "file_01jc8x4m2k9q7r3t5vwy6z",
+            "file_01jc8x5n7p2s4u6w8y0a1b"
+          ],
+          "page_size": "A4",
+          "orientation": "auto"
+        }
+      }
+    },
+    {
+      "name": "epub_to_pdf",
+      "title": "EPUB to PDF",
+      "description": "Lay an e-book out as a PDF. First step only.",
+      "accepts": [
+        "epub"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "2 credits per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/epub-to-pdf",
+        "operation_id": "pdfEpubToPdf"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {},
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z"
+        }
+      }
+    },
+    {
+      "name": "html_to_pdf",
+      "title": "Web page or HTML to PDF",
+      "description": "Render a public web page, or HTML you send, to PDF. Takes no input file, so it is the first step of a job with no inputs.",
+      "accepts": [],
+      "combines": false,
+      "output": "pdf",
+      "credits": "3 credits per 50 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/html-to-pdf",
+        "operation_id": "pdfHtmlToPdf"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "maxLength": 2000,
+            "format": "uri"
+          },
+          "html": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000000
+          },
+          "layout": {
+            "type": "string",
+            "enum": [
+              "desktop",
+              "tablet",
+              "mobile"
+            ]
+          },
+          "margin": {
+            "type": "string",
+            "enum": [
+              "no",
+              "small",
+              "big"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "url": "https://example.com",
+          "layout": "desktop"
+        },
+        "shortcut_body": {
+          "url": "https://example.com",
+          "layout": "desktop"
+        }
+      }
+    },
+    {
+      "name": "create_pdf",
+      "title": "Create a PDF from Markdown, HTML or data",
+      "description": "Write the content, get a well-set PDF: Markdown or HTML, a template (plain, report, invoice, letter, resume) in a quiet or classic style, page size, margins, header, footer and page numbers. Or send an invoice's, resume's or letter's fields as data and we lay it out; an invoice is added up and checked. Takes no input file.",
+      "accepts": [],
+      "combines": false,
+      "output": "pdf",
+      "credits": "2 credits per 20 pages made (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/create-pdf",
+        "operation_id": "pdfCreatePdf"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "markdown": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000000
+          },
+          "html": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000000
+          },
+          "data": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "heading": {
+                    "description": "Printed at the top. Default \"Invoice\"; e.g. \"Tax invoice\", \"Quote\".",
+                    "type": "string",
+                    "maxLength": 60
+                  },
+                  "invoice_number": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "issue_date": {
+                    "description": "Printed as given.",
+                    "type": "string",
+                    "maxLength": 60
+                  },
+                  "due_date": {
+                    "type": "string",
+                    "maxLength": 60
+                  },
+                  "currency": {
+                    "description": "An ISO code (\"USD\", \"NPR\") for proper formatting, or a symbol (\"Rs.\").",
+                    "type": "string",
+                    "maxLength": 12
+                  },
+                  "locale": {
+                    "description": "Number format, e.g. \"en-IN\" for 1,00,000.00. Default \"en-US\".",
+                    "type": "string",
+                    "maxLength": 20
+                  },
+                  "vendor": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "address": {
+                        "description": "Lines separated by newlines.",
+                        "type": "string",
+                        "maxLength": 1000
+                      },
+                      "tax_id": {
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      "email": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "phone": {
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      "logo_url": {
+                        "description": "https image, top left.",
+                        "type": "string",
+                        "maxLength": 2000,
+                        "format": "uri"
+                      }
+                    }
+                  },
+                  "customer": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "address": {
+                        "description": "Lines separated by newlines.",
+                        "type": "string",
+                        "maxLength": 1000
+                      },
+                      "tax_id": {
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      "email": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "phone": {
+                        "type": "string",
+                        "maxLength": 100
+                      }
+                    }
+                  },
+                  "line_items": {
+                    "minItems": 1,
+                    "maxItems": 500,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "description": {
+                          "type": "string",
+                          "maxLength": 1000
+                        },
+                        "quantity": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string",
+                              "maxLength": 40,
+                              "pattern": "\\d"
+                            }
+                          ],
+                          "description": "A number, or text as printed (\"1,250.00\")."
+                        },
+                        "unit_price": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string",
+                              "maxLength": 40,
+                              "pattern": "\\d"
+                            }
+                          ],
+                          "description": "A number, or text as printed (\"1,250.00\")."
+                        },
+                        "amount": {
+                          "description": "Left out: quantity × unit_price.",
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string",
+                              "maxLength": 40,
+                              "pattern": "\\d"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "description"
+                      ]
+                    }
+                  },
+                  "subtotal": {
+                    "description": "Left out: the lines added up.",
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "\\d"
+                      }
+                    ]
+                  },
+                  "discount": {
+                    "description": "Taken off the subtotal.",
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "\\d"
+                      }
+                    ]
+                  },
+                  "tax_rate": {
+                    "description": "Percent, e.g. 13 for 13%.",
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "tax_label": {
+                    "description": "Default \"Tax\"; e.g. \"VAT 13%\".",
+                    "type": "string",
+                    "maxLength": 40
+                  },
+                  "tax": {
+                    "description": "Left out: tax_rate of the subtotal after discount.",
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "\\d"
+                      }
+                    ]
+                  },
+                  "shipping": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "\\d"
+                      }
+                    ],
+                    "description": "A number, or text as printed (\"1,250.00\")."
+                  },
+                  "total": {
+                    "description": "Left out: subtotal − discount + tax + shipping.",
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "\\d"
+                      }
+                    ]
+                  },
+                  "amount_paid": {
+                    "description": "Prints a balance due.",
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "\\d"
+                      }
+                    ]
+                  },
+                  "payment_details": {
+                    "description": "Bank or payment instructions.",
+                    "type": "string",
+                    "maxLength": 2000
+                  },
+                  "notes": {
+                    "type": "string",
+                    "maxLength": 4000
+                  }
+                },
+                "required": [
+                  "line_items"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "headline": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "contact": {
+                    "description": "Email, phone, city, links: one line, in order.",
+                    "maxItems": 8,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 200
+                    }
+                  },
+                  "summary": {
+                    "type": "string",
+                    "maxLength": 3000
+                  },
+                  "experience": {
+                    "maxItems": 40,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string",
+                          "maxLength": 200
+                        },
+                        "subtitle": {
+                          "description": "Organization, school, issuer.",
+                          "type": "string",
+                          "maxLength": 200
+                        },
+                        "location": {
+                          "type": "string",
+                          "maxLength": 120
+                        },
+                        "start": {
+                          "type": "string",
+                          "maxLength": 40
+                        },
+                        "end": {
+                          "description": "\"Present\" for a current one.",
+                          "type": "string",
+                          "maxLength": 40
+                        },
+                        "text": {
+                          "type": "string",
+                          "maxLength": 2000
+                        },
+                        "bullets": {
+                          "maxItems": 20,
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "maxLength": 600
+                          }
+                        }
+                      },
+                      "required": [
+                        "title"
+                      ]
+                    }
+                  },
+                  "education": {
+                    "maxItems": 20,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string",
+                          "maxLength": 200
+                        },
+                        "subtitle": {
+                          "description": "Organization, school, issuer.",
+                          "type": "string",
+                          "maxLength": 200
+                        },
+                        "location": {
+                          "type": "string",
+                          "maxLength": 120
+                        },
+                        "start": {
+                          "type": "string",
+                          "maxLength": 40
+                        },
+                        "end": {
+                          "description": "\"Present\" for a current one.",
+                          "type": "string",
+                          "maxLength": 40
+                        },
+                        "text": {
+                          "type": "string",
+                          "maxLength": 2000
+                        },
+                        "bullets": {
+                          "maxItems": 20,
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "maxLength": 600
+                          }
+                        }
+                      },
+                      "required": [
+                        "title"
+                      ]
+                    }
+                  },
+                  "skills": {
+                    "description": "A list, or groups: [{ \"label\": \"Languages\", \"items\": [\"Nepali\", \"English\"] }].",
+                    "anyOf": [
+                      {
+                        "maxItems": 80,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 80
+                        }
+                      },
+                      {
+                        "maxItems": 20,
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "label": {
+                              "type": "string",
+                              "maxLength": 80
+                            },
+                            "items": {
+                              "maxItems": 40,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 80
+                              }
+                            }
+                          },
+                          "required": [
+                            "label",
+                            "items"
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "sections": {
+                    "description": "More sections: projects, certifications, awards.",
+                    "maxItems": 10,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "heading": {
+                          "type": "string",
+                          "maxLength": 80
+                        },
+                        "entries": {
+                          "maxItems": 40,
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "title": {
+                                "type": "string",
+                                "maxLength": 200
+                              },
+                              "subtitle": {
+                                "description": "Organization, school, issuer.",
+                                "type": "string",
+                                "maxLength": 200
+                              },
+                              "location": {
+                                "type": "string",
+                                "maxLength": 120
+                              },
+                              "start": {
+                                "type": "string",
+                                "maxLength": 40
+                              },
+                              "end": {
+                                "description": "\"Present\" for a current one.",
+                                "type": "string",
+                                "maxLength": 40
+                              },
+                              "text": {
+                                "type": "string",
+                                "maxLength": 2000
+                              },
+                              "bullets": {
+                                "maxItems": 20,
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "maxLength": 600
+                                }
+                              }
+                            },
+                            "required": [
+                              "title"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "heading",
+                        "entries"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "sender": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "address": {
+                        "description": "Lines separated by newlines.",
+                        "type": "string",
+                        "maxLength": 1000
+                      },
+                      "tax_id": {
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      "email": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "phone": {
+                        "type": "string",
+                        "maxLength": 100
+                      }
+                    }
+                  },
+                  "recipient": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "address": {
+                        "description": "Lines separated by newlines.",
+                        "type": "string",
+                        "maxLength": 1000
+                      },
+                      "tax_id": {
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      "email": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "phone": {
+                        "type": "string",
+                        "maxLength": 100
+                      }
+                    }
+                  },
+                  "date": {
+                    "type": "string",
+                    "maxLength": 60
+                  },
+                  "reference": {
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "subject": {
+                    "type": "string",
+                    "maxLength": 300
+                  },
+                  "greeting": {
+                    "description": "\"Dear Ms Rai,\"",
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "body": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100000,
+                    "description": "Markdown; a blank line starts a paragraph."
+                  },
+                  "closing": {
+                    "description": "\"Yours sincerely,\"",
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "signature_name": {
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "signature_title": {
+                    "type": "string",
+                    "maxLength": 200
+                  }
+                },
+                "required": [
+                  "body"
+                ]
+              }
+            ],
+            "description": "Instead of markdown/html: the fields of an invoice, resume or letter (set template to match). We lay it out; for an invoice we also add up the lines, tax and total and report anything that doesn't add up."
+          },
+          "template": {
+            "type": "string",
+            "enum": [
+              "plain",
+              "report",
+              "invoice",
+              "letter",
+              "resume"
+            ]
+          },
+          "style": {
+            "type": "string",
+            "enum": [
+              "quiet",
+              "classic"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "page_size": {
+            "type": "string",
+            "enum": [
+              "A4",
+              "Letter"
+            ]
+          },
+          "margin": {
+            "type": "string",
+            "enum": [
+              "none",
+              "small",
+              "normal",
+              "wide"
+            ]
+          },
+          "header": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "footer": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "page_numbers": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "template": "invoice",
+          "data": {
+            "invoice_number": "INV-104",
+            "currency": "USD",
+            "customer": {
+              "name": "Acme Ltd"
+            },
+            "line_items": [
+              {
+                "description": "Consulting",
+                "quantity": 3,
+                "unit_price": 120
+              }
+            ],
+            "tax_rate": 10
+          }
+        },
+        "shortcut_body": {
+          "template": "invoice",
+          "data": {
+            "invoice_number": "INV-104",
+            "currency": "USD",
+            "customer": {
+              "name": "Acme Ltd"
+            },
+            "line_items": [
+              {
+                "description": "Consulting",
+                "quantity": 3,
+                "unit_price": 120
+              }
+            ],
+            "tax_rate": 10
+          }
+        }
+      }
+    },
+    {
+      "name": "redact",
+      "title": "Redact",
+      "description": "Remove content for real, not just cover it: rectangles you give (areas), or every occurrence of text you name (text). Text redaction is checked on the result: if any of it can still be found, the step fails and nothing is returned.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "1 credit per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/redact",
+        "operation_id": "pdfRedact"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "areas": {
+            "maxItems": 5000,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "page": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "x": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "y": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "width": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "height": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              },
+              "required": [
+                "page",
+                "x",
+                "y",
+                "width",
+                "height"
+              ]
+            }
+          },
+          "text": {
+            "minItems": 1,
+            "maxItems": 500,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          },
+          "match_case": {
+            "type": "boolean"
+          },
+          "remove_metadata": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "text": [
+            "Jane Doe",
+            "555-0142"
+          ]
+        },
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z",
+          "text": [
+            "Jane Doe",
+            "555-0142"
+          ]
+        }
+      }
+    },
+    {
+      "name": "sign",
+      "title": "Sign",
+      "description": "Stamp a signature image (PNG or JPEG, uploaded as a file) on a page: at a named spot, or at x and y in points from the top-left corner. Width in points; the height follows the image.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "1 credit per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/sign",
+        "operation_id": "pdfSign"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "signature_file_id": {
+            "type": "string",
+            "pattern": "^file_"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "string",
+                "enum": [
+                  "first",
+                  "last",
+                  "all"
+                ]
+              }
+            ]
+          },
+          "position": {
+            "type": "string",
+            "enum": [
+              "bottom-right",
+              "bottom-center",
+              "bottom-left",
+              "top-right",
+              "top-left"
+            ]
+          },
+          "x": {
+            "type": "number",
+            "minimum": 0
+          },
+          "y": {
+            "type": "number",
+            "minimum": 0
+          },
+          "width": {
+            "type": "number",
+            "minimum": 20,
+            "maximum": 600
+          }
+        },
+        "required": [
+          "signature_file_id"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "signature_file_id": "file_01jc8x6r9t1v3x5z7b9c2d",
+          "page": "last",
+          "position": "bottom-right"
+        },
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z",
+          "signature_file_id": "file_01jc8x6r9t1v3x5z7b9c2d",
+          "page": "last",
+          "position": "bottom-right"
+        }
+      }
+    },
+    {
+      "name": "metadata",
+      "title": "Edit or remove document properties",
+      "description": "Set the title, author, subject and keywords, or remove every property.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "1 credit per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/metadata",
+        "operation_id": "pdfMetadata"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "remove": {
+            "type": "boolean"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "author": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "subject": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "keywords": {
+            "type": "string",
+            "maxLength": 1000
+          }
+        },
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "title": "Q3 report",
+          "author": "Finance team"
+        },
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z",
+          "title": "Q3 report",
+          "author": "Finance team"
+        }
+      }
+    },
+    {
+      "name": "bookmarks",
+      "title": "Set bookmarks",
+      "description": "Replace the bookmarks (outline) with your own: a title and a page each, nested by level (0 = top).",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "pdf",
+      "credits": "1 credit per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/bookmarks",
+        "operation_id": "pdfBookmarks"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "items": {
+            "maxItems": 2000,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1000
+                },
+                "page": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "level": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 10
+                }
+              },
+              "required": [
+                "title",
+                "page"
+              ]
+            }
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "items": [
+            {
+              "title": "Summary",
+              "page": 1
+            },
+            {
+              "title": "Figures",
+              "page": 4,
+              "level": 1
+            }
+          ]
+        },
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z",
+          "items": [
+            {
+              "title": "Summary",
+              "page": 1
+            },
+            {
+              "title": "Figures",
+              "page": 4,
+              "level": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "pdf_to_excel",
+      "title": "PDF to Excel",
+      "description": "Tables to a spreadsheet. mode tables: detected from the page, no AI. mode ai: a model reads the tables (scans too). mode statement: bank statements as one checked sheet, totals compared with the statement's own. Ends the job.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "excel",
+      "credits": "3 credits per 50 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/pdf-to-excel",
+        "operation_id": "pdfPdfToExcel"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "tables",
+              "ai",
+              "statement"
+            ]
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "xlsx",
+              "csv"
+            ]
+          },
+          "instructions": {
+            "type": "string",
+            "maxLength": 500
+          }
+        },
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "mode": "tables",
+          "format": "xlsx"
+        },
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z",
+          "mode": "tables",
+          "format": "xlsx"
+        }
+      }
+    },
+    {
+      "name": "extract_images",
+      "title": "Extract images",
+      "description": "Every image in the PDF, at its own resolution, in a ZIP. Ends the job.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "zip",
+      "credits": "2 credits per 100 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/extract-images",
+        "operation_id": "pdfExtractImages"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {},
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z"
+        }
+      }
+    },
+    {
+      "name": "pdf_to_latex",
+      "title": "PDF to LaTeX",
+      "description": "A .tex file (zipped with an images folder when the PDF has pictures). Ends the job.",
+      "accepts": [
+        "pdf"
+      ],
+      "combines": false,
+      "output": "tex",
+      "credits": "3 credits per 50 pages (started)",
+      "shortcut": {
+        "method": "POST",
+        "path": "/v1/pdf/pdf-to-latex",
+        "operation_id": "pdfPdfToLatex"
+      },
+      "params": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "format": {
+            "type": "string",
+            "enum": [
+              "latex",
+              "tikz"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "example": {
+        "params": {
+          "format": "latex"
+        },
+        "shortcut_body": {
+          "file_id": "file_01jc8x4m2k9q7r3t5vwy6z",
+          "format": "latex"
+        }
+      }
+    }
+  ],
+  "mcp_tools": [
+    {
+      "name": "search_docs",
+      "title": "Search FynePDF docs",
+      "description": "Search the FynePDF API and MCP documentation: actions, parameters, pricing, files, jobs and errors.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "query"
+        ]
+      },
+      "read_only": true,
+      "destructive": false
+    },
+    {
+      "name": "list_actions",
+      "title": "List FynePDF actions",
+      "description": "Every action FynePDF can run on a file (the REST API's job steps), with what it takes, what it makes and its price in API credits.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {}
+      },
+      "read_only": true,
+      "destructive": false
+    },
+    {
+      "name": "upload_file",
+      "title": "Upload a file",
+      "description": "Bring a file into FynePDF. Shows a drop zone where the app supports it (Claude, ChatGPT, VS Code). With file_name and size_bytes it also returns a signed upload_url and a ready curl command, for a code sandbox or agent to PUT the bytes; the file_id works once the upload is done. ChatGPT users can just pass the attached file to any tool instead.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "file_name": {
+            "description": "Name with extension, e.g. report.pdf.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "size_bytes": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          }
+        }
+      },
+      "read_only": false,
+      "destructive": false
+    },
+    {
+      "name": "import_file_from_url",
+      "title": "Import a file from a URL",
+      "description": "Fetch a PDF, Office file, image or EPUB from a public link into FynePDF and get its file_id.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "file_name": {
+            "type": "string",
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "url"
+        ]
+      },
+      "read_only": false,
+      "destructive": false
+    },
+    {
+      "name": "get_file",
+      "title": "Get a file",
+      "description": "A file's details and a fresh download link (valid 1 hour).",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "file_id": {
+            "type": "string",
+            "pattern": "^file_"
+          }
+        },
+        "required": [
+          "file_id"
+        ]
+      },
+      "read_only": true,
+      "destructive": false
+    },
+    {
+      "name": "list_library_files",
+      "title": "List Library files",
+      "description": "Files saved in the person's FynePDF Library, newest first (pinned on top). Pass an id as library_file_id to any tool.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "query": {
+            "description": "Part of a file name.",
+            "type": "string",
+            "maxLength": 200
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      },
+      "read_only": true,
+      "destructive": false
+    },
+    {
+      "name": "save_to_library",
+      "title": "Save to Library",
+      "description": "Keep a result in the person's FynePDF Library (fynepdf.com/library), so it isn't deleted after 24 hours.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "file_id": {
+            "type": "string",
+            "pattern": "^file_"
+          },
+          "file_name": {
+            "type": "string",
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "file_id"
+        ]
+      },
+      "read_only": false,
+      "destructive": false
+    },
+    {
+      "name": "merge_pdfs",
+      "title": "Merge PDFs",
+      "description": "Join PDFs into one, in the order given (file_ids, then files, then file_urls). Each part gets a bookmark with its name.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "file_ids": {
+            "description": "FynePDF file_ids, in order.",
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^file_"
+            }
+          },
+          "files": {
+            "description": "Files the person attached in ChatGPT, in order (filled in by ChatGPT).",
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "download_url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "file_id": {
+                  "type": "string"
+                },
+                "mime_type": {
+                  "type": "string"
+                },
+                "file_name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "download_url",
+                "file_id"
+              ],
+              "description": "A file the person attached in ChatGPT (filled in by ChatGPT)."
+            }
+          },
+          "file_urls": {
+            "description": "Public links to the files, in order.",
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        }
+      },
+      "read_only": false,
+      "destructive": false
+    },
+    {
+      "name": "split_pdf",
+      "title": "Split PDF",
+      "description": "Split a PDF into parts by page ranges (\"1-3\", \"4\", \"5-9\") or into parts no bigger than max_part_mb. Returns a ZIP of the parts.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "file_id": {
+            "description": "A FynePDF file_id from upload_file, import_file_from_url or an earlier tool.",
+            "type": "string",
+            "pattern": "^file_"
+          },
+          "file": {
+            "type": "object",
+            "properties": {
+              "download_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "file_id": {
+                "type": "string"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "file_name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "download_url",
+              "file_id"
+            ],
+            "description": "A file the person attached in ChatGPT (filled in by ChatGPT)."
+          },
+          "file_url": {
+            "description": "A public link to the file.",
+            "type": "string",
+            "format": "uri"
+          },
+          "library_file_id": {
+            "description": "A file from the person's FynePDF Library (from list_library_files).",
+            "type": "string"
+          },
+          "ranges": {
+            "minItems": 1,
+            "maxItems": 100,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "max_part_mb": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        }
+      },
+      "read_only": false,
+      "destructive": false
+    },
+    {
+      "name": "edit_pages",
+      "title": "Edit pages",
+      "description": "Change a PDF's pages (counted from 1): delete pages, keep only some pages, put pages in a new order (pages left out are dropped), or rotate all pages or a range.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "file_id": {
+            "description": "A FynePDF file_id from upload_file, import_file_from_url or an earlier tool.",
+            "type": "string",
+            "pattern": "^file_"
+          },
+          "file": {
+            "type": "object",
+            "properties": {
+              "download_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "file_id": {
+                "type": "string"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "file_name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "download_url",
+              "file_id"
+            ],
+            "description": "A file the person attached in ChatGPT (filled in by ChatGPT)."
+          },
+          "file_url": {
+            "description": "A public link to the file.",
+            "type": "string",
+            "format": "uri"
+          },
+          "library_file_id": {
+            "description": "A file from the person's FynePDF Library (from list_library_files).",
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "delete",
+              "keep",
+              "reorder",
+              "rotate"
+            ]
+          },
+          "pages": {
+            "description": "For delete and keep: the pages. For reorder: every page to keep, in the new order.",
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "angle": {
+            "anyOf": [
+              {
+                "type": "number",
+                "const": 90
+              },
+              {
+                "type": "number",
+                "const": 180
+              },
+              {
+                "type": "number",
+                "const": 270
+              }
+            ]
+          },
+          "page_range": {
+            "description": "For rotate: \"all\" (default), a page like \"4\" or a range like \"2-7\".",
+            "type": "string"
+          }
+        },
+        "required": [
+          "operation"
+        ]
+      },
+      "read_only": false,
+      "destructive": false
+    },
+    {
+      "name": "stamp_pdf",
+      "title": "Add page numbers or a watermark",
+      "description": "Number the pages, stamp a text watermark on every page, or both in one go. Page number format uses %d twice, e.g. \"Page %d of %d\".",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "file_id": {
+            "description": "A FynePDF file_id from upload_file, import_file_from_url or an earlier tool.",
+            "type": "string",
+            "pattern": "^file_"
+          },
+          "file": {
+            "type": "object",
+            "properties": {
+              "download_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "file_id": {
+                "type": "string"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "file_name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "download_url",
+              "file_id"
+            ],
+            "description": "A file the person attached in ChatGPT (filled in by ChatGPT)."
+          },
+          "file_url": {
+            "description": "A public link to the file.",
+            "type": "string",
+            "format": "uri"
+          },
+          "library_file_id": {
+            "description": "A file from the person's FynePDF Library (from list_library_files).",
+            "type": "string"
+          },
+          "page_numbers": {
+            "type": "object",
+            "properties": {
+              "format": {
+                "type": "string",
+                "maxLength": 60
+              },
+              "position": {
+                "type": "string",
+                "enum": [
+                  "top-left",
+                  "top-center",
+                  "top-right",
+                  "bottom-left",
+                  "bottom-center",
+                  "bottom-right"
+                ]
+              },
+              "start_number": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "skip_cover_page": {
+                "type": "boolean"
+              }
+            }
+          },
+          "watermark": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "opacity": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "rotation": {
+                "type": "number",
+                "minimum": -360,
+                "maximum": 360
+              },
+              "size": {
+                "type": "number",
+                "minimum": 6,
+                "maximum": 300
+              },
+              "color": {
+                "type": "string",
+                "pattern": "^#[0-9a-fA-F]{6}$"
+              }
+            },
+            "required": [
+              "text"
+            ]
+          }
+        }
+      },
+      "read_only": false,
+      "destructive": false
+    },
+    {
+      "name": "compress_pdf",
+      "title": "Compress PDF",
+      "description": "Make a PDF smaller: at a level (low, medium, high) or under a target size in MB. The result says whether the target was met.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "file_id": {
+            "description": "A FynePDF file_id from upload_file, import_file_from_url or an earlier tool.",
+            "type": "string",
+            "pattern": "^file_"
+          },
+          "file": {
+            "type": "object",
+            "properties": {
+              "download_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "file_id": {
+                "type": "string"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "file_name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "download_url",
+              "file_id"
+            ],
+            "description": "A file the person attached in ChatGPT (filled in by ChatGPT)."
+          },
+          "file_url": {
+            "description": "A public link to the file.",
+            "type": "string",
+            "format": "uri"
+          },
+          "library_file_id": {
+            "description": "A file from the person's FynePDF Library (from list_library_files).",
+            "type": "string"
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "target_size_mb": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        }
+      },
+      "read_only": false,
+      "destructive": false
+    },
+    {
+      "name": "protect_pdf",
+      "title": "Lock, unlock or flatten a PDF",
+      "description": "lock: add a password needed to open it. unlock: remove a password you know. flatten: burn form fields and annotations into the page so they can't be changed.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "file_id": {
+            "description": "A FynePDF file_id from upload_file, import_file_from_url or an earlier tool.",
+            "type": "string",
+            "pattern": "^file_"
+          },
+          "file": {
+            "type": "object",
+            "properties": {
+              "download_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "file_id": {
+                "type": "string"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "file_name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "download_url",
+              "file_id"
+            ],
+            "description": "A file the person attached in ChatGPT (filled in by ChatGPT)."
+          },
+          "file_url": {
+            "description": "A public link to the file.",
+            "type": "string",
+            "format": "uri"
+          },
+          "library_file_id": {
+            "description": "A file from the person's FynePDF Library (from list_library_files).",
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "lock",
+              "unlock",
+              "flatten"
+            ]
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "operation"
+        ]
+      },
+      "read_only": false,
+      "destructive": false
+    },
+    {
+      "name": "redact_pdf",
+      "title": "Redact PDF",
+      "description": "Remove text for real, not just cover it: name the exact text to remove, or describe it (\"all names, emails and account numbers\") and FynePDF finds it. The result is checked: if any of the text can still be found, nothing is returned. The original file is kept.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "file_id": {
+            "description": "A FynePDF file_id from upload_file, import_file_from_url or an earlier tool.",
+            "type": "string",
+            "pattern": "^file_"
+          },
+          "file": {
+            "type": "object",
+            "properties": {
+              "download_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "file_id": {
+                "type": "string"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "file_name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "download_url",
+              "file_id"
+            ],
+            "description": "A file the person attached in ChatGPT (filled in by ChatGPT)."
+          },
+          "file_url": {
+            "description": "A public link to the file.",
+            "type": "string",
+            "format": "uri"
+          },
+          "library_file_id": {
+            "description": "A file from the person's FynePDF Library (from list_library_files).",
+            "type": "string"
+          },
+          "text": {
+            "minItems": 1,
+            "maxItems": 500,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          },
+          "find": {
+            "description": "What to remove, in words (uses AI to find it).",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "match_case": {
+            "type": "boolean"
+          },
+          "remove_metadata": {
+            "type": "boolean"
+          }
+        }
+      },
+      "read_only": false,
+      "destructive": true
+    },
+    {
+      "name": "convert_from_pdf",
+      "title": "Convert a PDF",
+      "description": "Turn a PDF into Word (.docx), Excel or CSV (tables found on the page), images (PNG/JPEG in a ZIP), Markdown, EPUB, PDF/A (archival), LaTeX, or a grayscale PDF. For tables read by AI (scans, bank statements), use extract_data.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "file_id": {
+            "description": "A FynePDF file_id from upload_file, import_file_from_url or an earlier tool.",
+            "type": "string",
+            "pattern": "^file_"
+          },
+          "file": {
+            "type": "object",
+            "properties": {
+              "download_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "file_id": {
+                "type": "string"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "file_name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "download_url",
+              "file_id"
+            ],
+            "description": "A file the person attached in ChatGPT (filled in by ChatGPT)."
+          },
+          "file_url": {
+            "description": "A public link to the file.",
+            "type": "string",
+            "format": "uri"
+          },
+          "library_file_id": {
+            "description": "A file from the person's FynePDF Library (from list_library_files).",
+            "type": "string"
+          },
+          "to": {
+            "type": "string",
+            "enum": [
+              "word",
+              "excel",
+              "csv",
+              "images",
+              "markdown",
+              "epub",
+              "pdfa",
+              "latex",
+              "grayscale"
+            ]
+          },
+          "image_format": {
+            "type": "string",
+            "enum": [
+              "png",
+              "jpg"
+            ]
+          },
+          "dpi": {
+            "type": "integer",
+            "minimum": 36,
+            "maximum": 300
+          }
+        },
+        "required": [
+          "to"
+        ]
+      },
+      "read_only": false,
+      "destructive": false
+    },
+    {
+      "name": "convert_to_pdf",
+      "title": "Convert to PDF",
+      "description": "Make a PDF from Word, Excel or PowerPoint files, images (one page each, in order), an EPUB, or a public web page (url). For content you write yourself, use create_pdf.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "file_ids": {
+            "description": "FynePDF file_ids, in order.",
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^file_"
+            }
+          },
+          "files": {
+            "description": "Files the person attached in ChatGPT, in order (filled in by ChatGPT).",
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "download_url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "file_id": {
+                  "type": "string"
+                },
+                "mime_type": {
+                  "type": "string"
+                },
+                "file_name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "download_url",
+                "file_id"
+              ],
+              "description": "A file the person attached in ChatGPT (filled in by ChatGPT)."
+            }
+          },
+          "file_urls": {
+            "description": "Public links to the files, in order.",
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "library_file_id": {
+            "description": "A file from the person's FynePDF Library (from list_library_files).",
+            "type": "string"
+          },
+          "url": {
+            "description": "A public web page to render as a PDF.",
+            "type": "string",
+            "format": "uri"
+          },
+          "page_layout": {
+            "description": "For url.",
+            "type": "string",
+            "enum": [
+              "desktop",
+              "tablet",
+              "mobile"
+            ]
+          }
+        }
+      },
+      "read_only": false,
+      "destructive": false
+    },
+    {
+      "name": "ocr_pdf",
+      "title": "OCR: make a scan searchable",
+      "description": "Add a text layer to scanned pages, so the text can be searched, copied and read by AI.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "file_id": {
+            "description": "A FynePDF file_id from upload_file, import_file_from_url or an earlier tool.",
+            "type": "string",
+            "pattern": "^file_"
+          },
+          "file": {
+            "type": "object",
+            "properties": {
+              "download_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "file_id": {
+                "type": "string"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "file_name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "download_url",
+              "file_id"
+            ],
+            "description": "A file the person attached in ChatGPT (filled in by ChatGPT)."
+          },
+          "file_url": {
+            "description": "A public link to the file.",
+            "type": "string",
+            "format": "uri"
+          },
+          "library_file_id": {
+            "description": "A file from the person's FynePDF Library (from list_library_files).",
+            "type": "string"
+          }
+        }
+      },
+      "read_only": false,
+      "destructive": false
+    },
+    {
+      "name": "create_pdf",
+      "title": "Create a PDF",
+      "description": "Turn Markdown or HTML you write into a well-set PDF: a report, invoice, letter, resume or plain document. Tables, headings, lists, images by URL and page breaks work; header, footer and page numbers are optional. For an invoice, resume or letter, prefer data (the fields, with template set to match): it is laid out properly, and an invoice is added up for you (leave out amounts, subtotal, tax or total to have them worked out; give them and they are checked). extract_data's invoice result can be passed as data as it is. Use it whenever the person wants a document they can download, print or send.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "markdown": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000000
+          },
+          "html": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000000
+          },
+          "data": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "heading": {
+                    "description": "Printed at the top. Default \"Invoice\"; e.g. \"Tax invoice\", \"Quote\".",
+                    "type": "string",
+                    "maxLength": 60
+                  },
+                  "invoice_number": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "issue_date": {
+                    "description": "Printed as given.",
+                    "type": "string",
+                    "maxLength": 60
+                  },
+                  "due_date": {
+                    "type": "string",
+                    "maxLength": 60
+                  },
+                  "currency": {
+                    "description": "An ISO code (\"USD\", \"NPR\") for proper formatting, or a symbol (\"Rs.\").",
+                    "type": "string",
+                    "maxLength": 12
+                  },
+                  "locale": {
+                    "description": "Number format, e.g. \"en-IN\" for 1,00,000.00. Default \"en-US\".",
+                    "type": "string",
+                    "maxLength": 20
+                  },
+                  "vendor": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "address": {
+                        "description": "Lines separated by newlines.",
+                        "type": "string",
+                        "maxLength": 1000
+                      },
+                      "tax_id": {
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      "email": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "phone": {
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      "logo_url": {
+                        "description": "https image, top left.",
+                        "type": "string",
+                        "maxLength": 2000,
+                        "format": "uri"
+                      }
+                    }
+                  },
+                  "customer": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "address": {
+                        "description": "Lines separated by newlines.",
+                        "type": "string",
+                        "maxLength": 1000
+                      },
+                      "tax_id": {
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      "email": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "phone": {
+                        "type": "string",
+                        "maxLength": 100
+                      }
+                    }
+                  },
+                  "line_items": {
+                    "minItems": 1,
+                    "maxItems": 500,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "description": {
+                          "type": "string",
+                          "maxLength": 1000
+                        },
+                        "quantity": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string",
+                              "maxLength": 40,
+                              "pattern": "\\d"
+                            }
+                          ],
+                          "description": "A number, or text as printed (\"1,250.00\")."
+                        },
+                        "unit_price": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string",
+                              "maxLength": 40,
+                              "pattern": "\\d"
+                            }
+                          ],
+                          "description": "A number, or text as printed (\"1,250.00\")."
+                        },
+                        "amount": {
+                          "description": "Left out: quantity × unit_price.",
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string",
+                              "maxLength": 40,
+                              "pattern": "\\d"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "description"
+                      ]
+                    }
+                  },
+                  "subtotal": {
+                    "description": "Left out: the lines added up.",
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "\\d"
+                      }
+                    ]
+                  },
+                  "discount": {
+                    "description": "Taken off the subtotal.",
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "\\d"
+                      }
+                    ]
+                  },
+                  "tax_rate": {
+                    "description": "Percent, e.g. 13 for 13%.",
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "tax_label": {
+                    "description": "Default \"Tax\"; e.g. \"VAT 13%\".",
+                    "type": "string",
+                    "maxLength": 40
+                  },
+                  "tax": {
+                    "description": "Left out: tax_rate of the subtotal after discount.",
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "\\d"
+                      }
+                    ]
+                  },
+                  "shipping": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "\\d"
+                      }
+                    ],
+                    "description": "A number, or text as printed (\"1,250.00\")."
+                  },
+                  "total": {
+                    "description": "Left out: subtotal − discount + tax + shipping.",
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "\\d"
+                      }
+                    ]
+                  },
+                  "amount_paid": {
+                    "description": "Prints a balance due.",
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "\\d"
+                      }
+                    ]
+                  },
+                  "payment_details": {
+                    "description": "Bank or payment instructions.",
+                    "type": "string",
+                    "maxLength": 2000
+                  },
+                  "notes": {
+                    "type": "string",
+                    "maxLength": 4000
+                  }
+                },
+                "required": [
+                  "line_items"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "headline": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "contact": {
+                    "description": "Email, phone, city, links: one line, in order.",
+                    "maxItems": 8,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 200
+                    }
+                  },
+                  "summary": {
+                    "type": "string",
+                    "maxLength": 3000
+                  },
+                  "experience": {
+                    "maxItems": 40,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string",
+                          "maxLength": 200
+                        },
+                        "subtitle": {
+                          "description": "Organization, school, issuer.",
+                          "type": "string",
+                          "maxLength": 200
+                        },
+                        "location": {
+                          "type": "string",
+                          "maxLength": 120
+                        },
+                        "start": {
+                          "type": "string",
+                          "maxLength": 40
+                        },
+                        "end": {
+                          "description": "\"Present\" for a current one.",
+                          "type": "string",
+                          "maxLength": 40
+                        },
+                        "text": {
+                          "type": "string",
+                          "maxLength": 2000
+                        },
+                        "bullets": {
+                          "maxItems": 20,
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "maxLength": 600
+                          }
+                        }
+                      },
+                      "required": [
+                        "title"
+                      ]
+                    }
+                  },
+                  "education": {
+                    "maxItems": 20,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string",
+                          "maxLength": 200
+                        },
+                        "subtitle": {
+                          "description": "Organization, school, issuer.",
+                          "type": "string",
+                          "maxLength": 200
+                        },
+                        "location": {
+                          "type": "string",
+                          "maxLength": 120
+                        },
+                        "start": {
+                          "type": "string",
+                          "maxLength": 40
+                        },
+                        "end": {
+                          "description": "\"Present\" for a current one.",
+                          "type": "string",
+                          "maxLength": 40
+                        },
+                        "text": {
+                          "type": "string",
+                          "maxLength": 2000
+                        },
+                        "bullets": {
+                          "maxItems": 20,
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "maxLength": 600
+                          }
+                        }
+                      },
+                      "required": [
+                        "title"
+                      ]
+                    }
+                  },
+                  "skills": {
+                    "description": "A list, or groups: [{ \"label\": \"Languages\", \"items\": [\"Nepali\", \"English\"] }].",
+                    "anyOf": [
+                      {
+                        "maxItems": 80,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 80
+                        }
+                      },
+                      {
+                        "maxItems": 20,
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "label": {
+                              "type": "string",
+                              "maxLength": 80
+                            },
+                            "items": {
+                              "maxItems": 40,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 80
+                              }
+                            }
+                          },
+                          "required": [
+                            "label",
+                            "items"
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "sections": {
+                    "description": "More sections: projects, certifications, awards.",
+                    "maxItems": 10,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "heading": {
+                          "type": "string",
+                          "maxLength": 80
+                        },
+                        "entries": {
+                          "maxItems": 40,
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "title": {
+                                "type": "string",
+                                "maxLength": 200
+                              },
+                              "subtitle": {
+                                "description": "Organization, school, issuer.",
+                                "type": "string",
+                                "maxLength": 200
+                              },
+                              "location": {
+                                "type": "string",
+                                "maxLength": 120
+                              },
+                              "start": {
+                                "type": "string",
+                                "maxLength": 40
+                              },
+                              "end": {
+                                "description": "\"Present\" for a current one.",
+                                "type": "string",
+                                "maxLength": 40
+                              },
+                              "text": {
+                                "type": "string",
+                                "maxLength": 2000
+                              },
+                              "bullets": {
+                                "maxItems": 20,
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "maxLength": 600
+                                }
+                              }
+                            },
+                            "required": [
+                              "title"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "heading",
+                        "entries"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "sender": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "address": {
+                        "description": "Lines separated by newlines.",
+                        "type": "string",
+                        "maxLength": 1000
+                      },
+                      "tax_id": {
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      "email": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "phone": {
+                        "type": "string",
+                        "maxLength": 100
+                      }
+                    }
+                  },
+                  "recipient": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "address": {
+                        "description": "Lines separated by newlines.",
+                        "type": "string",
+                        "maxLength": 1000
+                      },
+                      "tax_id": {
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      "email": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "phone": {
+                        "type": "string",
+                        "maxLength": 100
+                      }
+                    }
+                  },
+                  "date": {
+                    "type": "string",
+                    "maxLength": 60
+                  },
+                  "reference": {
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "subject": {
+                    "type": "string",
+                    "maxLength": 300
+                  },
+                  "greeting": {
+                    "description": "\"Dear Ms Rai,\"",
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "body": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100000,
+                    "description": "Markdown; a blank line starts a paragraph."
+                  },
+                  "closing": {
+                    "description": "\"Yours sincerely,\"",
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "signature_name": {
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "signature_title": {
+                    "type": "string",
+                    "maxLength": 200
+                  }
+                },
+                "required": [
+                  "body"
+                ]
+              }
+            ],
+            "description": "Instead of markdown/html: the fields of an invoice, resume or letter (set template to match). We lay it out; for an invoice we also add up the lines, tax and total and report anything that doesn't add up."
+          },
+          "template": {
+            "type": "string",
+            "enum": [
+              "plain",
+              "report",
+              "invoice",
+              "letter",
+              "resume"
+            ]
+          },
+          "style": {
+            "description": "quiet (default): modern sans, gray labels. classic: serif, fine rules, centered heads; suits letters and traditional CVs.",
+            "type": "string",
+            "enum": [
+              "quiet",
+              "classic"
+            ]
+          },
+          "title": {
+            "description": "Also the file name.",
+            "type": "string",
+            "maxLength": 200
+          },
+          "page_size": {
+            "type": "string",
+            "enum": [
+              "A4",
+              "Letter"
+            ]
+          },
+          "margin": {
+            "type": "string",
+            "enum": [
+              "none",
+              "small",
+              "normal",
+              "wide"
+            ]
+          },
+          "header": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "footer": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "page_numbers": {
+            "type": "boolean"
+          }
+        }
+      },
+      "read_only": false,
+      "destructive": false
+    },
+    {
+      "name": "sign_pdf",
+      "title": "Sign a PDF",
+      "description": "Stamp a signature image (PNG or JPEG) on a page: at a named spot (bottom-right by default) or at x and y in points from the top-left corner.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "file_id": {
+            "description": "A FynePDF file_id from upload_file, import_file_from_url or an earlier tool.",
+            "type": "string",
+            "pattern": "^file_"
+          },
+          "file": {
+            "type": "object",
+            "properties": {
+              "download_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "file_id": {
+                "type": "string"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "file_name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "download_url",
+              "file_id"
+            ],
+            "description": "A file the person attached in ChatGPT (filled in by ChatGPT)."
+          },
+          "file_url": {
+            "description": "A public link to the file.",
+            "type": "string",
+            "format": "uri"
+          },
+          "library_file_id": {
+            "description": "A file from the person's FynePDF Library (from list_library_files).",
+            "type": "string"
+          },
+          "signature_file_id": {
+            "description": "The signature image's file_id.",
+            "type": "string",
+            "pattern": "^file_"
+          },
+          "signature": {
+            "description": "A signature image attached in ChatGPT.",
+            "type": "object",
+            "properties": {
+              "download_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "file_id": {
+                "type": "string"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "file_name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "download_url",
+              "file_id"
+            ]
+          },
+          "signature_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "string",
+                "enum": [
+                  "first",
+                  "last",
+                  "all"
+                ]
+              }
+            ]
+          },
+          "position": {
+            "type": "string",
+            "enum": [
+              "bottom-right",
+              "bottom-center",
+              "bottom-left",
+              "top-right",
+              "top-left"
+            ]
+          },
+          "x": {
+            "type": "number",
+            "minimum": 0
+          },
+          "y": {
+            "type": "number",
+            "minimum": 0
+          },
+          "width": {
+            "type": "number",
+            "minimum": 20,
+            "maximum": 600
+          }
+        }
+      },
+      "read_only": false,
+      "destructive": false
+    },
+    {
+      "name": "ask_pdf",
+      "title": "Ask a PDF",
+      "description": "Answer a question from the document only, citing pages. Every quote is checked against the page text (verified: false marks one that couldn't be found).",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "file_id": {
+            "description": "A FynePDF file_id from upload_file, import_file_from_url or an earlier tool.",
+            "type": "string",
+            "pattern": "^file_"
+          },
+          "file": {
+            "type": "object",
+            "properties": {
+              "download_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "file_id": {
+                "type": "string"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "file_name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "download_url",
+              "file_id"
+            ],
+            "description": "A file the person attached in ChatGPT (filled in by ChatGPT)."
+          },
+          "file_url": {
+            "description": "A public link to the file.",
+            "type": "string",
+            "format": "uri"
+          },
+          "library_file_id": {
+            "description": "A file from the person's FynePDF Library (from list_library_files).",
+            "type": "string"
+          },
+          "question": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "question"
+        ]
+      },
+      "read_only": true,
+      "destructive": false
+    },
+    {
+      "name": "summarize_pdf",
+      "title": "Summarize a PDF",
+      "description": "A plain summary and key points, each with the pages it comes from.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "file_id": {
+            "description": "A FynePDF file_id from upload_file, import_file_from_url or an earlier tool.",
+            "type": "string",
+            "pattern": "^file_"
+          },
+          "file": {
+            "type": "object",
+            "properties": {
+              "download_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "file_id": {
+                "type": "string"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "file_name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "download_url",
+              "file_id"
+            ],
+            "description": "A file the person attached in ChatGPT (filled in by ChatGPT)."
+          },
+          "file_url": {
+            "description": "A public link to the file.",
+            "type": "string",
+            "format": "uri"
+          },
+          "library_file_id": {
+            "description": "A file from the person's FynePDF Library (from list_library_files).",
+            "type": "string"
+          },
+          "length": {
+            "type": "string",
+            "enum": [
+              "short",
+              "medium",
+              "long"
+            ]
+          },
+          "focus": {
+            "description": "What the summary should focus on.",
+            "type": "string",
+            "maxLength": 500
+          }
+        }
+      },
+      "read_only": true,
+      "destructive": false
+    },
+    {
+      "name": "extract_data",
+      "title": "Extract data from a PDF",
+      "description": "Read structured data with AI and check it in code: invoice (fields, lines and totals, added up), statement (bank transactions, balances compared), tables (every table, cell by cell), or schema (your own JSON Schema). Output json returns the data here; excel or csv also makes a spreadsheet file (tables and statement).",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "file_id": {
+            "description": "A FynePDF file_id from upload_file, import_file_from_url or an earlier tool.",
+            "type": "string",
+            "pattern": "^file_"
+          },
+          "file": {
+            "type": "object",
+            "properties": {
+              "download_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "file_id": {
+                "type": "string"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "file_name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "download_url",
+              "file_id"
+            ],
+            "description": "A file the person attached in ChatGPT (filled in by ChatGPT)."
+          },
+          "file_url": {
+            "description": "A public link to the file.",
+            "type": "string",
+            "format": "uri"
+          },
+          "library_file_id": {
+            "description": "A file from the person's FynePDF Library (from list_library_files).",
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "invoice",
+              "statement",
+              "tables",
+              "schema"
+            ]
+          },
+          "schema": {
+            "description": "For type schema: a JSON Schema object.",
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {}
+          },
+          "instructions": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "output": {
+            "type": "string",
+            "enum": [
+              "json",
+              "excel",
+              "csv"
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "read_only": true,
+      "destructive": false
+    },
+    {
+      "name": "smart_edit",
+      "title": "Edit a PDF by instruction",
+      "description": "Describe the change (\"remove the blank pages, number the rest and make it PDF/A\"): FynePDF plans the steps from its actions, checks the plan, and runs it. With run false it only returns the plan.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "file_id": {
+            "description": "A FynePDF file_id from upload_file, import_file_from_url or an earlier tool.",
+            "type": "string",
+            "pattern": "^file_"
+          },
+          "file": {
+            "type": "object",
+            "properties": {
+              "download_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "file_id": {
+                "type": "string"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "file_name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "download_url",
+              "file_id"
+            ],
+            "description": "A file the person attached in ChatGPT (filled in by ChatGPT)."
+          },
+          "file_url": {
+            "description": "A public link to the file.",
+            "type": "string",
+            "format": "uri"
+          },
+          "library_file_id": {
+            "description": "A file from the person's FynePDF Library (from list_library_files).",
+            "type": "string"
+          },
+          "instruction": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "run": {
+            "description": "Default true.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "instruction"
+        ]
+      },
+      "read_only": false,
+      "destructive": false
+    },
+    {
+      "name": "get_job",
+      "title": "Get a job",
+      "description": "Check a job that was still running, and get its files when it's done. Waits up to 50 seconds by default.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "pattern": "^job_"
+          },
+          "wait_seconds": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 50
+          }
+        },
+        "required": [
+          "job_id"
+        ]
+      },
+      "read_only": true,
+      "destructive": false
+    }
+  ]
+}
