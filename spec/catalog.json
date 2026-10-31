@@ -2281,7 +2281,7 @@
     {
       "name": "upload_file",
       "title": "Upload a file",
-      "description": "Bring a file into FynePDF. Shows a drop zone where the app supports it (Claude, ChatGPT, VS Code). With file_name and size_bytes it also returns a signed upload_url and a ready curl command, for a code sandbox or agent to PUT the bytes; the file_id works once the upload is done. ChatGPT users can just pass the attached file to any tool instead.",
+      "description": "Bring a file into FynePDF. Shows a drop zone where the app supports it (Claude, ChatGPT, VS Code); it takes several files at once, e.g. for a merge, and reports their file_ids in order. With file_name and size_bytes it also returns a signed upload_url and a ready curl command, for a code sandbox or agent to PUT the bytes; the file_id works once the upload is done. ChatGPT users can just pass the attached file to any tool instead.",
       "input_schema": {
         "type": "object",
         "$schema": "https://json-schema.org/draft/2020-12/schema",

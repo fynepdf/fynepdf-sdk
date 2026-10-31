@@ -837,7 +837,7 @@
         },
         "responses": {
           "201": {
-            "description": "The file. For an upload URL: `upload_url` to PUT to, valid one hour.",
+            "description": "The file. For an upload URL: `upload_url` to PUT exactly `size` bytes to, valid 15 minutes.",
             "content": {
               "application/json": {
                 "schema": {
