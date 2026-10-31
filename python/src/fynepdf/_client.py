@@ -212,6 +212,15 @@ class _Account:
         return self._client._request("GET", "/balance")
 
 
+class _Actions:
+    def __init__(self, client: FynePDF) -> None:
+        self._client = client
+
+    def list(self) -> List[dict[str, Any]]:
+        """Every action a job can run, with its parameters and price."""
+        return self._client._request("GET", "/actions")["data"]
+
+
 def _problem(response: httpx.Response) -> dict[str, Any] | None:
     try:
         body = response.json()
@@ -252,6 +261,8 @@ class FynePDF:
         self.ai = _Ai(self)
         #: The key you're calling with, and the credits left.
         self.account = _Account(self)
+        #: The catalog of actions, with their parameters and prices.
+        self.actions = _Actions(self)
 
     def close(self) -> None:
         self._http.close()

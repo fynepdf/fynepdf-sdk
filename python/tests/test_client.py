@@ -115,6 +115,10 @@ class ClientTest(unittest.TestCase):
             failed.jobs.wait("job_2")
         self.assertEqual(caught.exception.code, "step_failed")
 
+    def test_actions_list(self):
+        fyne = client(lambda request: httpx.Response(200, json={"object": "list", "data": [{"name": "compress"}]}))
+        self.assertEqual(fyne.actions.list(), [{"name": "compress"}])
+
     def test_no_key_says_where_to_get_one(self):
         saved = os.environ.pop("FYNEPDF_API_KEY", None)
         try:
