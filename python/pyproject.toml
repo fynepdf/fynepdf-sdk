@@ -1,0 +1,28 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fynepdf"
+version = "0.1.0"
+description = "The FynePDF API for Python: compress, convert, OCR, redact, merge, split and generate PDFs, and read them with AI."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.9"
+authors = [{ name = "FynePDF", email = "support@fynepdf.com" }]
+keywords = ["pdf", "pdf-api", "compress-pdf", "pdf-to-word", "pdf-to-excel", "html-to-pdf", "ocr", "redact", "generate-pdf", "fynepdf"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Typing :: Typed",
+  "Topic :: Office/Business",
+  "Intended Audience :: Developers",
+]
+dependencies = ["httpx>=0.27,<1"]
+
+[project.urls]
+Homepage = "https://fynepdf.com/developers/docs"
+Documentation = "https://fynepdf.com/developers/docs"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/fynepdf"]
