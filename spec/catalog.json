@@ -2370,6 +2370,30 @@
       "destructive": false
     },
     {
+      "name": "list_files",
+      "title": "List recent files",
+      "description": "Files on FynePDF from the last 24 hours, newest first: what the person dropped in the upload box, other uploads and imports, and results. Use it to find the file_id of a file the person says they uploaded, by its name.",
+      "input_schema": {
+        "type": "object",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "query": {
+            "description": "Part of a file name.",
+            "type": "string",
+            "maxLength": 200
+          },
+          "limit": {
+            "description": "Default 10.",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          }
+        }
+      },
+      "read_only": true,
+      "destructive": false
+    },
+    {
       "name": "save_to_library",
       "title": "Save to Library",
       "description": "Keep a result in the person's FynePDF Library (fynepdf.com/library), so it isn't deleted after 24 hours.",
