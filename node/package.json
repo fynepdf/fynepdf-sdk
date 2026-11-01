@@ -17,6 +17,14 @@
   ],
   "homepage": "https://fynepdf.com/developers/docs",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fynepdf/fynepdf-sdk.git",
+    "directory": "node"
+  },
+  "bugs": {
+    "url": "https://github.com/fynepdf/fynepdf-sdk/issues"
+  },
   "author": "FynePDF <support@fynepdf.com> (https://fynepdf.com)",
   "type": "module",
   "main": "./dist/index.js",
@@ -40,7 +48,8 @@
     "generate": "node scripts/generate.mjs",
     "build": "tsc -p tsconfig.json",
     "test": "node --test test/*.test.mjs",
-    "smoke": "node test/smoke.mjs"
+    "smoke": "node test/smoke.mjs",
+    "prepack": "npm run build"
   },
   "devDependencies": {
     "@types/node": "22.20.4",
