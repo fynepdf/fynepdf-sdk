@@ -23,6 +23,8 @@ dependencies = ["httpx>=0.27,<1"]
 [project.urls]
 Homepage = "https://fynepdf.com/developers/docs"
 Documentation = "https://fynepdf.com/developers/docs"
+Repository = "https://github.com/fynepdf/fynepdf-sdk"
+Issues = "https://github.com/fynepdf/fynepdf-sdk/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/fynepdf"]
